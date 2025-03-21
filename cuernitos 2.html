@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda en línea</title>
+    <link rel="stylesheet" href="estilo.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+        .product {
+            display: inline-block;
+            width: 30%;
+            margin: 10px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            text-align: center;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #cart {
+            margin-top: 30px;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Tienda Online</h1>
+    
+    <div id="products">
+        <div class="product" data-name="Pluma negra" data-price="20">
+            <h2>Pluma negra</h2>
+            <p>$20</p>
+            <button onclick="addToCart(this)">Agregar al carrito</button>
+        </div>
+        <div class="product" data-name="Pluma azul" data-price="25">
+            <h2>Pluma azul</h2>
+            <p>$25</p>
+            <button onclick="addToCart(this)">Agregar al carrito</button>
+        </div>
+        <div class="product" data-name="Pluma roja" data-price="30">
+            <h2>Pluma roja</h2>
+            <p>$30</p>
+            <button onclick="addToCart(this)">Agregar al carrito</button>
+        </div>
+    </div>
+
+    <div id="cart">
+        <h2>Carrito de compras</h2>
+        <ul id="cart-items"></ul>
+        <p>Total: $<span id="total">0</span></p>
+    </div>
+
+    <form onsubmit="sendOrder(event)">
+        <h2>Datos del cliente</h2>
+        <label>Nombre: <input type="text" id="name" required></label><br><br>
+        <label>Dirección: <input type="text" id="address" required></label><br><br>
+        <label>Hora de entrega: <input type="time" id="time" required></label><br><br>
+        <label>WhatsApp: <input type="tel" id="whatsapp" required></label><br><br>
+        <button type="submit">Finalizar pedido</button>
+    </form>
+</div>
+
+<script>
+    const cart = [];
+
+    function addToCart(button) {
+        const product = button.parentElement;
+        const name = product.dataset.name;
+        const price = parseFloat(product.dataset.price);
+
+        cart.push({ name, price });
+        updateCart();
+    }
+
+    function updateCart() {
+        const cartItems = document.getElementById('cart-items');
+        const totalElement = document.getElementById('total');
+
+        cartItems.innerHTML = "";
+        let total = 0;
+
+        cart.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} - $${item.price}`;
+            cartItems.appendChild(li);
+            total += item.price;
+        });
+
+        totalElement.textContent = total;
+    }
+
+    function sendOrder(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const address = document.getElementById('address').value;
+        const time = document.getElementById('time').value;
+        const whatsapp = document.getElementById('whatsapp').value;
+
+        let cartDetails = cart.map(item => `${item.name} - $${item.price}`).join(', ');
+        let total = cart.reduce((sum, item) => sum + item.price, 0);
+
+        const message = `Pedido:\n👤 Nombre: ${name}\n📍 Dirección: ${address}\n⏰ Hora: ${time}\n📱 WhatsApp: ${whatsapp}\n🛒 Productos: ${cartDetails}\n💵 Total: $${total}`;
+
+        const phoneNumber = "2321270910";
+        const url = `https://wa.me/52${phoneNumber}?text=${encodeURIComponent(message)}`;
+        
+        window.open(url, '_blank');
+    }
+</script>
+
+</body>
+</html>
